@@ -1,0 +1,55 @@
+name: Skill problem
+description: A skill triggers when it shouldn't, doesn't trigger when it should, or gives bad guidance
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: skill
+    attributes:
+      label: Which skill?
+      options:
+        - app-blueprint
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did the skill do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected instead
+    validations:
+      required: true
+
+  - type: textarea
+    id: prompt
+    attributes:
+      label: The prompt you used
+      description: The exact wording matters — skills trigger on the description matching your request.
+      render: text
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Claude Code version
+      description: Output of `claude --version`
+    validations:
+      required: false
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How is the skill installed?
+      options:
+        - Personal (~/.claude/skills/)
+        - Project (.claude/skills/)
+    validations:
+      required: false

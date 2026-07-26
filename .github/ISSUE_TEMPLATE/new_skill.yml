@@ -1,0 +1,48 @@
+name: New skill proposal
+description: Propose a new skill for this collection
+labels: ["new skill"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please open this issue **before** writing the skill, so we can agree on scope first.
+
+  - type: input
+    id: name
+    attributes:
+      label: Proposed name
+      description: Lowercase, hyphen-separated — this becomes the folder name.
+      placeholder: my-skill
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does it solve?
+      description: What goes wrong today without it?
+    validations:
+      required: true
+
+  - type: textarea
+    id: trigger
+    attributes:
+      label: When should it trigger?
+      description: The kinds of requests that should load it — and the ones that shouldn't.
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: What does it produce?
+      description: The concrete result — a file, a decision, a changed behaviour.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: willing
+    attributes:
+      label: Contribution
+      options:
+        - label: I'm willing to write this skill myself

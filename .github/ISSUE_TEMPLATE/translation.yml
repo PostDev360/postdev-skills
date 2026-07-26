@@ -1,0 +1,37 @@
+name: Translation
+description: Add a new language, or fix an existing translation
+labels: ["translation"]
+body:
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: Deutsch (de)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of change?
+      options:
+        - New language
+        - Correction to an existing translation
+        - Existing translation is out of date
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: For corrections, quote the current text and your suggested replacement.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: willing
+    attributes:
+      label: Contribution
+      options:
+        - label: I'm willing to open the pull request myself
