@@ -8,6 +8,7 @@ body:
       label: Which skill?
       options:
         - app-blueprint
+        - openplaces
         - Other / not sure
     validations:
       required: true

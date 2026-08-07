@@ -3,7 +3,7 @@
 面向真实产品开发者的开源 [Claude Code](https://claude.com/claude-code) 技能（skills）。
 
 [![许可证: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-1-green.svg)](#技能列表)
+[![Skills](https://img.shields.io/badge/skills-2-green.svg)](#技能列表)
 [![欢迎 PR](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](../../CONTRIBUTING.md)
 [![ko-fi](https://img.shields.io/badge/support-ko--fi-ff5e5b.svg)](https://ko-fi.com/postdev360)
 
@@ -16,6 +16,7 @@
 | 技能 | 作用 |
 | --- | --- |
 | [**app-blueprint**](../../skills/app-blueprint/) | 在为新应用、新产品或新功能提出任何代码或架构方案*之前*，先用简单易懂的语言进行一次简短的需求访谈，然后写出一份由你确认的 `PROJECT_BRIEF.md`。 |
+| [**openplaces**](../../skills/openplaces/) | 基于开放数据回答地点、地址与出行问题——地点搜索、地理编码、路线规划、等时圈——无需付费 API 密钥，地址数据也不会离开欧盟。 |
 
 ## 安装
 
@@ -69,6 +70,42 @@ rm -rf /tmp/postdev-skills
 ### 产出结果
 
 一份经过确认的书面 Project Brief，作为后续所有实现工作的依据来源。
+
+## openplaces
+
+### 存在的原因
+
+问助手「最近的药店在哪里？」或「这个地址的坐标是多少？」，通常只有两条路：要么用付费的 Google Places 密钥，要么让它凭记忆编一个答案。两者都不好：前者每次请求都要花钱，后者会给出看似合理却错误的地址，而你无法把它和正确答案区分开。对于需要处理客户或病人地址的人来说，把这些数据发往美国托管的 API 更是一个 GDPR 问题，而不是偏好问题。
+
+本技能驱动 [`openplaces`](https://github.com/PostDev360/openplaces)——一个基于 OpenStreetMap、法国国家地址库（Base Adresse Nationale）和 OpenRouteService 作答的命令行工具，免费，且托管在法国与德国。
+
+### 前置依赖
+
+`openplaces` 命令。技能会检查它是否已安装，并给出安装方式：
+
+```bash
+uv tool install openplaces-cli    # 或：pipx install openplaces-cli
+```
+
+### 触发时机
+
+只要请求涉及真实地点、地址或行程——「最近的 X 在哪」「给这个地址做地理编码」「这个坐标是什么地方」「A 到 B 有多远」「20 分钟内我能到哪些地方」「找找 Y 附近正在营业的面包店」——或者你明确要求 Google 地图的替代方案时。
+
+### 工作方式
+
+1. 先确认命令行工具已安装；如果没有，拒绝凭空编造坐标——核心规则是：看似合理却错误的地址，比没有答案更糟。
+2. 选择合适的子命令（`search`、`resolve`、`reverse`、`details`、`route`、`isochrone`），并以 JSON 读取结果。
+3. 把 `open_now` 当作三态值处理——`true`、`false` 或**未知**——并如实报告「未知」，不会把它归约为「已关门」。
+4. 依据按错误类别划分的退出码采取行动，而不是盲目重试，也不会对公共 Overpass 实例反复轮询。
+5. 了解法国国家地址库的特性：它在自由文本中对市镇名的权重很低，因此技能会检查置信度分数，当结果与你指明的城市矛盾时改用 `--postcode`。
+
+### 它会主动告知的局限
+
+没有评分和评论——OpenStreetMap 并不收录这类数据，技能会直说，而不会拿自己对某家店的印象充数。欧洲城市地区覆盖极佳，其他地区则参差不齐。`route` 给出的是距离和时长，而非逐向导航。
+
+### 产出结果
+
+来自实时开放数据的地点记录、坐标或行程数据；当结果将用于公开发布时，会提示需要标注 `© OpenStreetMap 贡献者`。
 
 ## 参与贡献
 

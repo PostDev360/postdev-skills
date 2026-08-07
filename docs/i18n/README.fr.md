@@ -3,7 +3,7 @@
 Skills open-source pour [Claude Code](https://claude.com/claude-code), conçus pour celles et ceux qui livrent de vrais produits.
 
 [![Licence : MIT](https://img.shields.io/badge/License-MIT-blue.svg)](../../LICENSE)
-[![Skills](https://img.shields.io/badge/skills-1-green.svg)](#skills)
+[![Skills](https://img.shields.io/badge/skills-2-green.svg)](#skills)
 [![PRs bienvenues](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](../../CONTRIBUTING.md)
 [![ko-fi](https://img.shields.io/badge/support-ko--fi-ff5e5b.svg)](https://ko-fi.com/postdev360)
 
@@ -16,6 +16,7 @@ Skills open-source pour [Claude Code](https://claude.com/claude-code), conçus p
 | Skill | Rôle |
 | --- | --- |
 | [**app-blueprint**](../../skills/app-blueprint/) | Mène une courte interview de découverte en langage simple *avant* toute proposition de code ou d'architecture pour une nouvelle app, un produit ou une fonctionnalité — puis rédige un `PROJECT_BRIEF.md` que vous validez. |
+| [**openplaces**](../../skills/openplaces/) | Répond aux questions de lieux, d'adresses et de trajets à partir de données ouvertes — recherche, géocodage, itinéraires, isochrones — sans clé API payante et sans transfert d'adresses hors UE. |
 
 ## Installation
 
@@ -69,6 +70,42 @@ Deux principes se poursuivent pendant la construction :
 ### Résultat
 
 Un Project Brief validé et écrit, qui devient la référence pour tout le travail d'implémentation qui suit.
+
+## openplaces
+
+### Pourquoi ce skill existe
+
+Demander à un assistant « où est la pharmacie la plus proche ? » ou « quelles sont les coordonnées de cette adresse ? » suppose normalement soit une clé Google Places payante, soit une réponse inventée de mémoire. Les deux sont mauvaises : l'une coûte à chaque requête, l'autre produit des adresses plausibles mais fausses, impossibles à distinguer des bonnes. Et pour qui manipule des adresses de clients ou de patients, les envoyer vers une API hébergée aux États-Unis est un problème RGPD, pas une préférence.
+
+Ce skill pilote [`openplaces`](https://github.com/PostDev360/openplaces), un CLI qui répond à partir d'OpenStreetMap, de la Base Adresse Nationale et d'OpenRouteService — gratuitement, et hébergé en France et en Allemagne.
+
+### Prérequis
+
+La commande `openplaces`. Le skill vérifie sa présence et indique comment l'installer :
+
+```bash
+uv tool install openplaces-cli    # ou : pipx install openplaces-cli
+```
+
+### Quand il se déclenche
+
+Dès qu'une demande concerne un lieu réel, une adresse ou un trajet — « où est le X le plus proche », « géocode cette adresse », « qu'y a-t-il à ces coordonnées », « quelle distance entre A et B », « qu'est-ce que j'atteins en 20 minutes », « trouve les boulangeries ouvertes près de Y » — ou quand vous demandez explicitement une alternative à Google Maps.
+
+### Comment il fonctionne
+
+1. Vérifie que le CLI est installé, et refuse d'inventer des coordonnées s'il ne l'est pas — la règle centrale est qu'une adresse plausible mais fausse est pire que pas de réponse.
+2. Choisit la bonne sous-commande (`search`, `resolve`, `reverse`, `details`, `route`, `isochrone`) et lit les résultats en JSON.
+3. Traite `open_now` comme une valeur à trois états — `true`, `false`, ou **indéterminé** — et signale l'indéterminé comme tel, sans l'arrondir à « fermé ».
+4. Agit selon les codes de sortie par famille d'erreur plutôt que de réessayer aveuglément, et refuse de boucler sur les instances Overpass publiques.
+5. Connaît les particularités de la Base Adresse Nationale : elle pondère faiblement le nom de commune en texte libre, donc le skill contrôle le score de confiance et bascule sur `--postcode` quand un résultat contredit la ville que vous avez nommée.
+
+### Limites qu'il vous signalera
+
+Aucune note ni avis — OpenStreetMap n'en héberge pas, et le skill le dit plutôt que de substituer ses impressions sur des enseignes nommées. La couverture est excellente en Europe urbaine, plus inégale ailleurs. `route` donne une distance et une durée, pas une navigation virage par virage.
+
+### Résultat
+
+Des fiches de lieux, des coordonnées ou des données de trajet issues de données ouvertes à jour, avec la mention `© les contributeurs OpenStreetMap` signalée dès que les résultats sont destinés à une diffusion publique.
 
 ## Contribuer
 
