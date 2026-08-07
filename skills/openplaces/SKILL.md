@@ -28,10 +28,16 @@ If that fails, install it and say so — do not silently fall back to guessing
 coordinates from memory:
 
 ```bash
-uv tool install openplaces-cli    # or: pipx install openplaces-cli
+uv tool install git+https://github.com/PostDev360/openplaces
+# or: pipx install git+https://github.com/PostDev360/openplaces
 ```
 
-The distribution is `openplaces-cli`; the command is `openplaces`.
+Needs Python 3.10 or newer; `uv` fetches one itself if none is suitable. The
+distribution is `openplaces-cli` and the installed command is `openplaces` —
+`uv tool list` shows the former, `which openplaces` the latter.
+
+Install from git, not from PyPI: the package is not published there yet, so
+`uv tool install openplaces-cli` resolves to an unrelated project.
 
 ## Core rule: never invent a location
 

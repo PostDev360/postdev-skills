@@ -112,9 +112,18 @@ cache exists to prevent.
 ## The tool is not installed
 
 ```bash
-uv tool install openplaces-cli    # or: pipx install openplaces-cli
+uv tool install git+https://github.com/PostDev360/openplaces
+# or: pipx install git+https://github.com/PostDev360/openplaces
 ```
 
-The distribution name is `openplaces-cli`; the command is `openplaces`. If
-neither `uv` nor `pipx` is available, say so and stop. Do not answer the
-location question from memory.
+Install from git: the package is not on PyPI yet, and the name `openplaces`
+there belongs to an unrelated project.
+
+The distribution name is `openplaces-cli`; the command is `openplaces`. Needs
+Python 3.10 or newer — `uv` will fetch one, `pipx` will not. If neither `uv`
+nor `pipx` is available, say so and stop. Do not answer the location question
+from memory.
+
+If the install succeeded but `openplaces` is still not found, the problem is
+the PATH: both installers place the command in `~/.local/bin`, which is not
+always on the PATH of a service or daemon.
